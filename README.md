@@ -61,9 +61,10 @@ pura-gif resize input.gif --width 200 --height 200 --out thumb.gif
 
 ### Encode
 
-| Encoder | Time | Notes |
-|---------|------|-------|
-| **pura-gif** | **372 ms** | Includes color quantization |
+| Encoder | Time | vs ffmpeg | Notes |
+|---------|------|-----------|-------|
+| ffmpeg (C) | 59 ms | — | |
+| **pura-gif** | **377 ms** | 6.4× slower | Includes color quantization |
 
 ## Why pure Ruby?
 
