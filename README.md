@@ -1,6 +1,6 @@
 # pura-gif
 
-A pure Ruby GIF decoder/encoder with zero C extension dependencies.
+A pure Ruby GIF decoder/encoder without additional image-processing libraries.
 
 Part of the **pura-*** series — pure Ruby image codec gems.
 
@@ -9,7 +9,7 @@ Part of the **pura-*** series — pure Ruby image codec gems.
 - GIF decoding (LZW decompression)
 - GIF encoding with color quantization (median cut)
 - Image resizing (bilinear / nearest-neighbor / fit / fill)
-- No native extensions, no FFI, no external dependencies
+- No image-specific native extension or FFI dependency
 - CLI tool included
 
 ## Installation
@@ -48,6 +48,8 @@ pura-gif resize input.gif --width 200 --height 200 --out thumb.gif
 
 ## Benchmark
 
+These historical measurements include ffmpeg process startup. They do not compare against an in-process C codec or establish Rails pipeline throughput.
+
 400×400 image, Ruby 4.0.2 + YJIT.
 
 ### Decode
@@ -57,7 +59,6 @@ pura-gif resize input.gif --width 200 --height 200 --out thumb.gif
 | ffmpeg (C) | 65 ms |
 | **pura-gif** | **77 ms** |
 
-**pura-gif is within 1.2× of ffmpeg** for GIF decoding. No other pure Ruby GIF implementation exists.
 
 ### Encode
 
@@ -69,8 +70,6 @@ pura-gif resize input.gif --width 200 --height 200 --out thumb.gif
 ## Why pure Ruby?
 
 - **`gem install` and go** — no `brew install`, no `apt install`, no C compiler needed
-- **Near-C speed** — GIF decode is within 1.2× of ffmpeg
-- **Works everywhere Ruby works** — CRuby, ruby.wasm, JRuby, TruffleRuby
 - **Part of pura-\*** — convert between JPEG, PNG, BMP, GIF, TIFF, WebP seamlessly
 
 ## Related gems
@@ -85,6 +84,12 @@ pura-gif resize input.gif --width 200 --height 200 --out thumb.gif
 | [pura-ico](https://github.com/komagata/pura-ico) | ICO | ✅ Available |
 | [pura-webp](https://github.com/komagata/pura-webp) | WebP | ✅ Available |
 | [pura-image](https://github.com/komagata/pura-image) | All formats | ✅ Available |
+
+## Pixel model and limitations
+
+Images contain 8-bit RGB pixels. Only the first image is decoded, and encoding writes one image. Animation timing and subsequent frames are not preserved. Transparent pixels are flattened to a background color; the image model does not retain alpha.
+
+`crop(x, y, width, height)` requires integer coordinates, positive dimensions, and a region entirely inside the image; invalid regions raise `ArgumentError`.
 
 ## License
 
